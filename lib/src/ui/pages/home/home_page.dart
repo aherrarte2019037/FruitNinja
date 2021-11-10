@@ -7,10 +7,11 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('assets/images/scenario-1.gif')
+        child: Center(
+          child: Text(
+            'Home',
+            style: TextStyle(
+              color: Colors.black.withOpacity(1),
             ),
           ),
         ),

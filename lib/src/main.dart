@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fruit_ninja/src/utils/router_util.dart';
-import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 
 void main() async {
@@ -20,10 +19,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const GetMaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Ninja',
-      initialRoute: 'home',
+      initialRoute: 'game',
       onGenerateRoute: RouterUtil.generateRoute,
     );
   }

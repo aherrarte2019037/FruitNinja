@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-class HomeController {
+class GameController {
   late BuildContext context;
   late Function updateView;
   
@@ -8,5 +8,5 @@ class HomeController {
     this.context = context;
     this.updateView = updateView;
   }
-  
+
 }
