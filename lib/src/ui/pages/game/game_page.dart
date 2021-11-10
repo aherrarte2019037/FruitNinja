@@ -31,7 +31,7 @@ class _GamePageState extends State<GamePage> {
           decoration: const BoxDecoration(
             image: DecorationImage(
               fit: BoxFit.cover,
-              image: AssetImage('assets/images/scenario-1.gif')
+              image: AssetImage('assets/images/scene-1.gif')
             )
           ),
           child: const CanvasWidget(),

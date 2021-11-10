@@ -55,11 +55,15 @@ class _CanvasWidgetState extends State<CanvasWidget> {
     return Positioned(
       left: fruit.position.dx,
       top: fruit.position.dy,
-      child: Container(
-        width: fruit.width,
-        height: fruit.height,
-        color: Colors.white,
-      ),
+      child: _appleImageWidget(),
+    );
+  }
+
+  Widget _appleImageWidget() {
+    return Image.asset(
+      'assets/images/apple-png',
+      height: 80,
+      fit: BoxFit.fitHeight,
     );
   }
 
