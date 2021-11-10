@@ -11,7 +11,7 @@ class Fruit {
     required this.height,
   });
 
-  bool isSliceInside(Offset point) {
+  bool isPointInside(Offset point) {
     if (point.dx < position.dx) {
       return false;
     }

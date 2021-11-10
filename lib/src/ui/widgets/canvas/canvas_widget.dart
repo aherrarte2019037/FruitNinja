@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:fruit_ninja/src/models/fruit_model.dart';
 import 'package:fruit_ninja/src/ui/widgets/canvas/canvas_widget_controller.dart';
 import 'package:fruit_ninja/src/ui/widgets/slice_painter_widget.dart';
 
@@ -29,6 +30,8 @@ class _CanvasWidgetState extends State<CanvasWidget> {
       children: [
         _gestureSlice(),
         _gestureDetector(),
+        for (Fruit fruit in _controller.fruits) _fruitWidget(fruit),
+
       ],
     );
   }
@@ -45,6 +48,18 @@ class _CanvasWidgetState extends State<CanvasWidget> {
       onScaleStart: (details) => _controller.setNewSlice(details),
       onScaleUpdate: (details) => _controller.addPointToSlice(details),
       onScaleEnd: (details) => _controller.resetSlice(),
+    );
+  }
+
+  Widget _fruitWidget(Fruit fruit){
+    return Positioned(
+      left: fruit.position.dx,
+      top: fruit.position.dy,
+      child: Container(
+        width: fruit.width,
+        height: fruit.height,
+        color: Colors.white,
+      ),
     );
   }
 
