@@ -16,20 +16,23 @@ class CanvasWidgetController {
   List<String> leftFruitImageParts = [
     'assets/images/fruits/apple-cut-left.png',
     'assets/images/fruits/orange-cut-left.png',
-    'assets/images/fruits/pineapple-cut-left.png',
+    'assets/images/fruits/cherry-cut-left.png',
     'assets/images/fruits/watermelon-cut-left.png',
+    'assets/images/fruits/melon-cut-left.png',
   ];
   List<String> rightFruitImageParts = [
     'assets/images/fruits/apple-cut-right.png',
     'assets/images/fruits/orange-cut-right.png',
-    'assets/images/fruits/pineapple-cut-right.png',
+    'assets/images/fruits/cherry-cut-left.png',
     'assets/images/fruits/watermelon-cut-right.png',
+    'assets/images/fruits/melon-cut-left.png',
   ];
   List<String> fruitImages = [
     'assets/images/fruits/apple.png',
     'assets/images/fruits/orange.png',
-    'assets/images/fruits/pineapple.png',
+    'assets/images/fruits/cherry.png',
     'assets/images/fruits/watermelon.png',
+    'assets/images/fruits/melon.png',
   ];
   TouchSlice touchSlice = TouchSlice(pointsList: []);
   
