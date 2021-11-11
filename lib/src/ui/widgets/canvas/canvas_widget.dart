@@ -31,6 +31,7 @@ class _CanvasWidgetState extends State<CanvasWidget> {
     return Stack(
       children: [
         _gestureSlice(),
+        _score(),
         for (FruitPart fruitPart in _controller.fruitParts) _fruitSliceWidget(fruitPart),
         for (Fruit fruit in _controller.fruits) _fruitWidget(fruit),
         _gestureDetector(),
@@ -80,6 +81,22 @@ class _CanvasWidgetState extends State<CanvasWidget> {
             : _controller.rightFruitImageParts[_controller.currentRandom],
           height: 80,
           fit: BoxFit.fitHeight,
+        ),
+      ),
+    );
+  }
+
+  Widget _score() {
+    return Positioned(
+      right: 50,
+      top: 30,
+      width: 150,
+      height: 40,
+      child: Container(
+        color: Colors.white,
+        child: Text(
+          _controller.score.toString(),
+          style: const TextStyle(fontWeight: FontWeight.w500),
         ),
       ),
     );

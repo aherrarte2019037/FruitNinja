@@ -10,6 +10,7 @@ class CanvasWidgetController {
   late Function updateView;
   Size screenSize = const Size(0, 0);
   int currentRandom = 0;
+  int score = 0;
   List<Fruit> fruits = [];
   List<FruitPart> fruitParts = [];
   List<String> leftFruitImageParts = [
@@ -62,7 +63,7 @@ class CanvasWidgetController {
     fruits.add(
       Fruit(
         position: Offset(
-          Random().nextInt(screenSize.width.toInt() - 100).toDouble(),
+          Random().nextInt(screenSize.width.toInt() - 180).toDouble(),
           screenSize.height,
         ),
         width: 80,
@@ -143,6 +144,7 @@ class CanvasWidgetController {
         rotation: fruitSliced.rotation,
     );
 
+    score += 20;
     fruitParts.addAll([leftSlice, rightSlice]);
     fruits.remove(fruitSliced);
     updateView();
