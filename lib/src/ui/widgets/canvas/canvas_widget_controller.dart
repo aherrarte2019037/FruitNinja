@@ -1,28 +1,80 @@
+import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fruit_ninja/src/models/fruit_model.dart';
+import 'package:fruit_ninja/src/models/fruit_part_model.dart';
 import 'package:fruit_ninja/src/models/touch_slice_model.dart';
 
 class CanvasWidgetController {
   late BuildContext context;
   late Function updateView;
+  Size screenSize = const Size(0, 0);
+  int currentRandom = 0;
   List<Fruit> fruits = [];
+  List<FruitPart> fruitParts = [];
+  List<String> leftFruitImageParts = [
+    'assets/images/fruits/apple-cut-left.png',
+    'assets/images/fruits/orange-cut-left.png',
+    'assets/images/fruits/pineapple-cut-left.png',
+    'assets/images/fruits/watermelon-cut-left.png',
+  ];
+  List<String> rightFruitImageParts = [
+    'assets/images/fruits/apple-cut-right.png',
+    'assets/images/fruits/orange-cut-right.png',
+    'assets/images/fruits/pineapple-cut-right.png',
+    'assets/images/fruits/watermelon-cut-right.png',
+  ];
+  List<String> fruitImages = [
+    'assets/images/fruits/apple.png',
+    'assets/images/fruits/orange.png',
+    'assets/images/fruits/pineapple.png',
+    'assets/images/fruits/watermelon.png',
+  ];
   TouchSlice touchSlice = TouchSlice(pointsList: []);
   
   void init(BuildContext context, Function updateView) {
     this.context = context;
     this.updateView = updateView;
-    fruits = generateFruits();
+    setScreenSize();
+    updateGravity();
+    Timer.periodic(const Duration(seconds: 2), addRandomFruit);
     updateView();
   }
 
-  List<Fruit> generateFruits() {
-    List<Fruit> fruits = [
-      Fruit(position: const Offset(100, 100), width: 80, height: 80),
-      Fruit(position: const Offset(400, 100), width: 80, height: 80),
-      Fruit(position: const Offset(600, 100), width: 80, height: 80),
-    ];
+  void updateGravity() {
+    for (Fruit fruit in fruits) {
+      fruit.applyGravity();
+    }
 
-    return fruits;
+    for (FruitPart fruitPart in fruitParts) {
+      fruitPart.applyGravity();
+    }
+
+    Future.delayed(const Duration(milliseconds: 30), updateGravity);
+    updateView();
+  }
+
+  void setScreenSize() {
+    screenSize = Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
+  }
+
+  void addRandomFruit(Timer timer) {
+    fruits.add(
+      Fruit(
+        position: Offset(
+          Random().nextInt(screenSize.width.toInt() - 100).toDouble(),
+          screenSize.height,
+        ),
+        width: 80,
+        height: 80,
+        additionalForce: Offset(
+          5 + Random().nextDouble() * 5,
+          (Random().nextInt(14) + 18) * -1,
+        ),
+        rotation: Random().nextDouble() / 3 - 0.16,
+      ),
+    );
+    currentRandom = Random().nextInt(fruitImages.length - 1);
   }
 
   void setNewSlice(ScaleStartDetails details) {
@@ -58,12 +110,41 @@ class CanvasWidgetController {
         }
 
         if (secondPointInside && !fruit.isPointInside(point)) {
-          fruits.remove(fruit);
+          turnFruitIntoSlice(fruit);
           break;
         }
       }
     }
     
+    updateView();
+  }
+
+  void turnFruitIntoSlice(Fruit fruitSliced) {
+    FruitPart leftSlice = FruitPart(
+        position: Offset(
+          fruitSliced.position.dx - fruitSliced.width / 8,
+          fruitSliced.position.dy
+        ),
+        width: fruitSliced.width / 2,
+        height: fruitSliced.height,
+        isLeft: true,
+        additionalForce: Offset(fruitSliced.additionalForce.dx - 1, 0),
+        rotation: fruitSliced.rotation,
+    );
+    FruitPart rightSlice = FruitPart(
+        position: Offset(
+          fruitSliced.position.dx + fruitSliced.width / 4 + fruitSliced.width / 8,
+          fruitSliced.position.dy
+        ),
+        width: fruitSliced.width / 2,
+        height: fruitSliced.height,
+        isLeft: false,
+        additionalForce: Offset(fruitSliced.additionalForce.dx + 1, 0),
+        rotation: fruitSliced.rotation,
+    );
+
+    fruitParts.addAll([leftSlice, rightSlice]);
+    fruits.remove(fruitSliced);
     updateView();
   }
 

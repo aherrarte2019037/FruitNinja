@@ -1,6 +1,8 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:fruit_ninja/src/models/fruit_model.dart';
+import 'package:fruit_ninja/src/models/fruit_part_model.dart';
 import 'package:fruit_ninja/src/ui/widgets/canvas/canvas_widget_controller.dart';
 import 'package:fruit_ninja/src/ui/widgets/slice_painter_widget.dart';
 
@@ -29,9 +31,9 @@ class _CanvasWidgetState extends State<CanvasWidget> {
     return Stack(
       children: [
         _gestureSlice(),
-        _gestureDetector(),
+        for (FruitPart fruitPart in _controller.fruitParts) _fruitSliceWidget(fruitPart),
         for (Fruit fruit in _controller.fruits) _fruitWidget(fruit),
-
+        _gestureDetector(),
       ],
     );
   }
@@ -55,15 +57,31 @@ class _CanvasWidgetState extends State<CanvasWidget> {
     return Positioned(
       left: fruit.position.dx,
       top: fruit.position.dy,
-      child: _appleImageWidget(),
+      child: Transform.rotate(
+        angle: fruit.rotation * pi * 2,
+        child: Image.asset(
+          _controller.fruitImages[_controller.currentRandom],
+          height: 80,
+          fit: BoxFit.fitHeight,
+        ),
+      ),
     );
   }
 
-  Widget _appleImageWidget() {
-    return Image.asset(
-      'assets/images/apple-png',
-      height: 80,
-      fit: BoxFit.fitHeight,
+  Widget _fruitSliceWidget(FruitPart fruitPart){
+    return Positioned(
+      left: fruitPart.position.dx,
+      top: fruitPart.position.dy,
+      child: Transform.rotate(
+      angle: fruitPart.rotation * pi * 2,
+        child: Image.asset(
+          fruitPart.isLeft
+            ? _controller.leftFruitImageParts[_controller.currentRandom]
+            : _controller.rightFruitImageParts[_controller.currentRandom],
+          height: 80,
+          fit: BoxFit.fitHeight,
+        ),
+      ),
     );
   }
 
