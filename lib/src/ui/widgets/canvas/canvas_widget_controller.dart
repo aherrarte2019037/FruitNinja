@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:fruit_ninja/src/models/fruit_model.dart';
 import 'package:fruit_ninja/src/models/fruit_part_model.dart';
 import 'package:fruit_ninja/src/models/touch_slice_model.dart';
+import 'package:just_audio/just_audio.dart';
 
 class CanvasWidgetController {
   late BuildContext context;
   late Function updateView;
+  late AnimationController scoreController;
   Size screenSize = const Size(0, 0);
   int currentRandom = 0;
   int score = 0;
@@ -23,9 +25,9 @@ class CanvasWidgetController {
   List<String> rightFruitImageParts = [
     'assets/images/fruits/apple-cut-right.png',
     'assets/images/fruits/orange-cut-right.png',
-    'assets/images/fruits/cherry-cut-left.png',
+    'assets/images/fruits/cherry-cut-right.png',
     'assets/images/fruits/watermelon-cut-right.png',
-    'assets/images/fruits/melon-cut-left.png',
+    'assets/images/fruits/melon-cut-right.png',
   ];
   List<String> fruitImages = [
     'assets/images/fruits/apple.png',
@@ -35,14 +37,36 @@ class CanvasWidgetController {
     'assets/images/fruits/melon.png',
   ];
   TouchSlice touchSlice = TouchSlice(pointsList: []);
-  
+  AudioPlayer backgroundPlayer = AudioPlayer();
+  AudioPlayer sliceFruitPlayer = AudioPlayer();
+
   void init(BuildContext context, Function updateView) {
     this.context = context;
     this.updateView = updateView;
+    sliceFruitPlayer.setAsset('assets/audio/fruit-cut.wav');
     setScreenSize();
     updateGravity();
     Timer.periodic(const Duration(seconds: 2), addRandomFruit);
     updateView();
+    playBackgroundAudio();
+  }
+
+  Future<void> playBackgroundAudio() async {
+    await backgroundPlayer.setAudioSource(
+      ConcatenatingAudioSource(
+        useLazyPreparation:  true,
+        children: [
+          AudioSource.uri(Uri.parse('assets/audio/track-1.mp3')),
+          AudioSource.uri(Uri.parse('assets/audio/track-2.mp3')),
+        ]
+      ),
+    );
+    await backgroundPlayer.setLoopMode(LoopMode.all);
+    backgroundPlayer.play();
+  }
+
+  void playSliceFruitAudio() {
+    sliceFruitPlayer.play();
   }
 
   void updateGravity() {
@@ -78,7 +102,7 @@ class CanvasWidgetController {
         rotation: Random().nextDouble() / 3 - 0.16,
       ),
     );
-    currentRandom = Random().nextInt(fruitImages.length - 1);
+    currentRandom = Random().nextInt(fruitImages.length);
   }
 
   void setNewSlice(ScaleStartDetails details) {
@@ -146,8 +170,10 @@ class CanvasWidgetController {
         additionalForce: Offset(fruitSliced.additionalForce.dx + 1, 0),
         rotation: fruitSliced.rotation,
     );
-
+    
     score += 20;
+    playSliceFruitAudio();
+    scoreController.repeat();
     fruitParts.addAll([leftSlice, rightSlice]);
     fruits.remove(fruitSliced);
     updateView();

@@ -8,5 +8,7 @@ class HomeController {
     this.context = context;
     this.updateView = updateView;
   }
+
+  void goToGame() => Navigator.pushNamed(context, 'game');
   
 }

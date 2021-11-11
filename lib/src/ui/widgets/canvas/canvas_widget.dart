@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:fruit_ninja/src/models/fruit_model.dart';
@@ -90,13 +91,33 @@ class _CanvasWidgetState extends State<CanvasWidget> {
     return Positioned(
       right: 50,
       top: 30,
-      width: 150,
-      height: 40,
+      width: 174,
+      height: 70,
       child: Container(
-        color: Colors.white,
-        child: Text(
-          _controller.score.toString(),
-          style: const TextStyle(fontWeight: FontWeight.w500),
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            fit: BoxFit.contain,
+            image: AssetImage('assets/images/score-background.png'),
+          ),
+        ),
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 2),
+            child: ZoomIn(
+              from: 1,
+              manualTrigger: true,
+              duration: const Duration(milliseconds: 300),
+              controller: (controller) => _controller.scoreController = controller,
+              child: Text(
+                _controller.score.toString(),
+                style: const TextStyle(
+                  color: Color(0XFF3A2922),
+                  fontSize: 22,
+                  fontFamily: '8BIT WONDER',
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

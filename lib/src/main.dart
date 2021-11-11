@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Ninja',
-      initialRoute: 'game',
+      initialRoute: 'home',
       onGenerateRoute: RouterUtil.generateRoute,
     );
   }
