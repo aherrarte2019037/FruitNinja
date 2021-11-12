@@ -6,29 +6,42 @@ class HomeController {
   late BuildContext context;
   late Function updateView;
   AudioPlayer backgroundPlayer = AudioPlayer();
+  AudioPlayer selectScenePlayer = AudioPlayer();
   bool isMuted = false;
   
   void init(BuildContext context, Function updateView) {
     this.context = context;
     this.updateView = updateView;
     backgroundPlayer.setAsset('assets/audio/track-2.mp3');
+    selectScenePlayer.setAsset('assets/audio/tribal-flute.wav');
     playBackgroundAudio();
   }
 
-  void goToGame(String backgroundAsset) {
-    backgroundPlayer.dispose();
-    Navigator.popAndPushNamed(context, 'game', arguments: backgroundAsset);
+  void goToGame(String backgroundAsset) async {
+    selectScenePlayer.pause();
+    backgroundPlayer.pause();
+    await Navigator.popAndPushNamed(context, 'game', arguments: backgroundAsset);
+    if (!isMuted) {
+      playBackgroundAudio();
+      playSelectSceneAudio();
+    }
   }
   
   Future<void> playBackgroundAudio() async {
-    await backgroundPlayer.setVolume(0.4);
+    await backgroundPlayer.setVolume(0.2);
     await backgroundPlayer.setLoopMode(LoopMode.one);
     backgroundPlayer.play();
   }
 
-  void handleSoundButton({bool? mute}) {
+  Future<void> playSelectSceneAudio() async {
+    await selectScenePlayer.seek(Duration.zero);
+    await selectScenePlayer.play();
+  }
+
+  void handleSoundButton({bool? mute}) async {
     if (!isMuted || (mute != null && mute)) {
       backgroundPlayer.pause();
+      selectScenePlayer.pause();
 
     } else {
       playBackgroundAudio();
@@ -38,7 +51,9 @@ class HomeController {
     updateView();
   }
 
-  void showSceneSelectDialog() {
+  void showSceneSelectDialog() async {
+    playSelectSceneAudio();
+
     showDialog(context: context, builder: (_) {
       return Dialog(
         backgroundColor: Colors.transparent,
@@ -86,7 +101,7 @@ class HomeController {
                                     color: Colors.black.withOpacity(0.4),
                                     spreadRadius: 2,
                                     blurRadius: 5,
-                                    offset: const Offset(0, 0), // changes position of shadow
+                                    offset: const Offset(0, 0),
                                   ),
                                 ]
                               ),
@@ -137,7 +152,7 @@ class HomeController {
                                     color: Colors.black.withOpacity(0.4),
                                     spreadRadius: 2,
                                     blurRadius: 5,
-                                    offset: const Offset(0, 0), // changes position of shadow
+                                    offset: const Offset(0, 0),
                                   ),
                                 ]
                               ),
@@ -188,7 +203,7 @@ class HomeController {
                                     color: Colors.black.withOpacity(0.4),
                                     spreadRadius: 2,
                                     blurRadius: 5,
-                                    offset: const Offset(0, 0), // changes position of shadow
+                                    offset: const Offset(0, 0),
                                   ),
                                 ]
                               ),
@@ -246,7 +261,7 @@ class HomeController {
                                     color: Colors.black.withOpacity(0.4),
                                     spreadRadius: 2,
                                     blurRadius: 5,
-                                    offset: const Offset(0, 0), // changes position of shadow
+                                    offset: const Offset(0, 0),
                                   ),
                                 ]
                               ),
@@ -348,7 +363,7 @@ class HomeController {
                                     color: Colors.black.withOpacity(0.4),
                                     spreadRadius: 2,
                                     blurRadius: 5,
-                                    offset: const Offset(0, 0), // changes position of shadow
+                                    offset: const Offset(0, 0),
                                   ),
                                 ]
                               ),
