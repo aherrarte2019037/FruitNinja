@@ -10,6 +10,8 @@ class CanvasWidgetController {
   late BuildContext context;
   late Function updateView;
   late AnimationController scoreController;
+  late Timer fruitsGenerateTimer;
+  late Timer updateGravityTimer;
   Size screenSize = const Size(0, 0);
   int currentRandom = 0;
   int score = 0;
@@ -39,34 +41,69 @@ class CanvasWidgetController {
   TouchSlice touchSlice = TouchSlice(pointsList: []);
   AudioPlayer backgroundPlayer = AudioPlayer();
   AudioPlayer sliceFruitPlayer = AudioPlayer();
+  AudioPlayer longHitPlayer = AudioPlayer();
+  AudioPlayer shortHitPlayer = AudioPlayer();
+  bool isMuted = false;
 
   void init(BuildContext context, Function updateView) {
     this.context = context;
     this.updateView = updateView;
+    backgroundPlayer.setAsset('assets/audio/track-1.mp3');
     sliceFruitPlayer.setAsset('assets/audio/fruit-cut.wav');
+    longHitPlayer.setAsset('assets/audio/long-hit.wav');
+    shortHitPlayer.setAsset('assets/audio/short-hit.wav');
     setScreenSize();
     updateGravity();
-    Timer.periodic(const Duration(seconds: 2), addRandomFruit);
+    fruitsGenerateTimer = Timer.periodic(const Duration(seconds: 2), addRandomFruit);
     updateView();
     playBackgroundAudio();
   }
 
   Future<void> playBackgroundAudio() async {
-    await backgroundPlayer.setAudioSource(
-      ConcatenatingAudioSource(
-        useLazyPreparation:  true,
-        children: [
-          AudioSource.uri(Uri.parse('assets/audio/track-1.mp3')),
-          AudioSource.uri(Uri.parse('assets/audio/track-2.mp3')),
-        ]
-      ),
-    );
-    await backgroundPlayer.setLoopMode(LoopMode.all);
+    await backgroundPlayer.setVolume(0.4);
+    await backgroundPlayer.setLoopMode(LoopMode.one);
     backgroundPlayer.play();
   }
 
-  void playSliceFruitAudio() {
-    sliceFruitPlayer.play();
+  Future<void> playSliceFruitAudio() async {
+    await sliceFruitPlayer.seek(Duration.zero);
+    await sliceFruitPlayer.play();
+  }
+
+  Future<void> playLongHitAudio() async {
+    await longHitPlayer.seek(Duration.zero);
+    await longHitPlayer.play();
+  }
+
+  Future<void> playShortHitAudio() async {
+    await shortHitPlayer.seek(Duration.zero);
+    await shortHitPlayer.setVolume(2);
+    await shortHitPlayer.play();
+  }
+
+  Future<void> goBack() async {
+    updateGravityTimer.cancel();
+    fruitsGenerateTimer.cancel();
+    await backgroundPlayer.dispose();
+    await sliceFruitPlayer.dispose();
+    await longHitPlayer.dispose();
+    await shortHitPlayer.dispose();
+    Navigator.pop(context);
+  }
+
+  void handleSoundButton({bool? mute}) {
+    if (!isMuted || (mute != null && mute)) {
+      backgroundPlayer.pause();
+      sliceFruitPlayer.pause();
+      longHitPlayer.pause();
+      shortHitPlayer.pause();
+
+    } else {
+      playBackgroundAudio();
+    }
+
+    isMuted = !isMuted;
+    updateView();
   }
 
   void updateGravity() {
@@ -77,8 +114,7 @@ class CanvasWidgetController {
     for (FruitPart fruitPart in fruitParts) {
       fruitPart.applyGravity();
     }
-
-    Future.delayed(const Duration(milliseconds: 30), updateGravity);
+    updateGravityTimer = Timer(const Duration(milliseconds: 30), updateGravity);
     updateView();
   }
 
@@ -107,13 +143,16 @@ class CanvasWidgetController {
 
   void setNewSlice(ScaleStartDetails details) {
     touchSlice = TouchSlice(pointsList: [details.localFocalPoint]);
-    updateView();
   }
 
   void addPointToSlice(ScaleUpdateDetails details) {
-    if (touchSlice.pointsList.length > 14) touchSlice.pointsList.removeAt(0);
-    touchSlice.pointsList.add(details.localFocalPoint);
+    if (touchSlice.pointsList.length > 25) {
+      playLongHitAudio();
+      touchSlice.pointsList.removeAt(0);
+    }
 
+    touchSlice.pointsList.add(details.localFocalPoint);
+    playShortHitAudio();
     checkSliceInside();
   }
 

@@ -14,13 +14,14 @@ class CanvasWidget extends StatefulWidget {
   _CanvasWidgetState createState() => _CanvasWidgetState();
 }
 
-class _CanvasWidgetState extends State<CanvasWidget> {
+class _CanvasWidgetState extends State<CanvasWidget> with WidgetsBindingObserver {
   final CanvasWidgetController _controller = CanvasWidgetController();
 
   updateView() => setState(() {});
 
   @override
   void initState() {
+    WidgetsBinding.instance!.addObserver(this);
     SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
       _controller.init(context, updateView);
     });
@@ -28,10 +29,18 @@ class _CanvasWidgetState extends State<CanvasWidget> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) _controller.handleSoundButton(mute: true);
+    if (state == AppLifecycleState.resumed) _controller.handleSoundButton(mute: false);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
         _gestureSlice(),
+        _backButton(),
+        _soundButton(),
         _score(),
         for (FruitPart fruitPart in _controller.fruitParts) _fruitSliceWidget(fruitPart),
         for (Fruit fruit in _controller.fruits) _fruitWidget(fruit),
@@ -89,16 +98,25 @@ class _CanvasWidgetState extends State<CanvasWidget> {
 
   Widget _score() {
     return Positioned(
-      right: 50,
+      right: 30,
       top: 30,
-      width: 174,
-      height: 70,
+      width: 120,
+      height: 50,
       child: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          image: const DecorationImage(
             fit: BoxFit.contain,
             image: AssetImage('assets/images/score-background.png'),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.4),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 0), // changes position of shadow
+            ),
+          ],
         ),
         child: Center(
           child: Padding(
@@ -112,10 +130,94 @@ class _CanvasWidgetState extends State<CanvasWidget> {
                 _controller.score.toString(),
                 style: const TextStyle(
                   color: Color(0XFF3A2922),
-                  fontSize: 22,
+                  fontSize: 18,
                   fontFamily: '8BIT WONDER',
                 ),
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _soundButton() {
+    return Positioned(
+      right: 165,
+      top: 32,
+      width: 49,
+      height: 49,
+      child: Container(
+        decoration: BoxDecoration(
+          image: const DecorationImage(
+            fit: BoxFit.contain,
+            image: AssetImage('assets/images/button-square-background.png'),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.4),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 0), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Center(
+          child: ElevatedButton(
+            onPressed: _controller.handleSoundButton,
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
+              padding: const EdgeInsets.all(10),
+              primary: Colors.transparent,
+              onPrimary: const Color(0XFF3A2922),
+              fixedSize: const Size(49, 49),
+              minimumSize: const Size(49, 49),
+            ),
+            child: Image.asset(
+              _controller.isMuted ? 'assets/images/mute-icon.png' : 'assets/images/unmute-icon.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _backButton() {
+    return Positioned(
+      left: 40,
+      top: 32,
+      width: 49,
+      height: 49,
+      child: Container(
+        decoration: BoxDecoration(
+          image: const DecorationImage(
+            fit: BoxFit.contain,
+            image: AssetImage('assets/images/button-square-background.png'),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.4),
+              spreadRadius: 2,
+              blurRadius: 5,
+              offset: const Offset(0, 0), // changes position of shadow
+            ),
+          ],
+        ),
+        child: Center(
+          child: ElevatedButton(
+            onPressed: _controller.goBack,
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.only(top: 12, bottom: 12, right: 3),
+              elevation: 0,
+              primary: Colors.transparent,
+              onPrimary: const Color(0XFF3A2922),
+              fixedSize: const Size(49, 49),
+              minimumSize: const Size(49, 49),
+            ),
+            child: Image.asset(
+              'assets/images/arrow-back-icon.png',
+              fit: BoxFit.contain,
             ),
           ),
         ),

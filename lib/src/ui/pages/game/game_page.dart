@@ -4,7 +4,9 @@ import 'package:fruit_ninja/src/ui/pages/game/game_controller.dart';
 import 'package:fruit_ninja/src/ui/widgets/canvas/canvas_widget.dart';
 
 class GamePage extends StatefulWidget {
-  const GamePage({ Key? key }) : super(key: key);
+  final String backgroundAsset;
+
+  const GamePage({ Key? key, required this.backgroundAsset }) : super(key: key);
 
   @override
   _GamePageState createState() => _GamePageState();
@@ -18,7 +20,7 @@ class _GamePageState extends State<GamePage> {
   @override
   void initState() {
     SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
-      _controller.init(context, updateView);
+      _controller.init(context, updateView, widget.backgroundAsset);
     });
     super.initState();
   }
@@ -28,11 +30,11 @@ class _GamePageState extends State<GamePage> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             image: DecorationImage(
               fit: BoxFit.cover,
-              image: AssetImage('assets/images/scene-1.gif')
-            )
+              image: AssetImage(_controller.backgroundAsset),
+            ),
           ),
           child: const CanvasWidget(),
         ),

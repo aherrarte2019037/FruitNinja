@@ -10,7 +10,8 @@ class RouterUtil {
         return MaterialPageRoute(builder: (_) => const HomePage());
 
       case 'game':
-        return MaterialPageRoute(builder: (_) => const GamePage());
+        String backgroundAsset = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) => GamePage(backgroundAsset: backgroundAsset));
 
       default:
         return MaterialPageRoute(builder: (_) {

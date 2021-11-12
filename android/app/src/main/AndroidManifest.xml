@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.fruit_ninja">
    <application
-        android:label="fruit_ninja"
+        android:label="Flutter Ninja"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
