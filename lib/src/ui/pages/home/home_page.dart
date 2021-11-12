@@ -45,21 +45,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           ),
           child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(right: 40, top: 20),
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: _soundButton(),
-                ),
-              ),
+              _soundButton(),
               const Spacer(),
-              Transform.translate(
-                offset: const Offset(0, 0),
-                child: Align(
-                  alignment: Alignment.center,
-                  child: _titleText(),
-                ),
-              ),
+              _titleText(),
               const SizedBox(height: 35),
               _selectScene(),
               const Spacer(),
@@ -72,35 +60,41 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Widget _soundButton() {
-    return Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(
-        image: const DecorationImage(
-          fit: BoxFit.contain,
-          image: AssetImage('assets/images/button-square-background.png'),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.4),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 0), // changes position of shadow
+    return Padding(
+      padding: const EdgeInsets.only(right: 40, top: 20),
+      child: Align(
+        alignment: Alignment.topRight,
+        child: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            image: const DecorationImage(
+              fit: BoxFit.contain,
+              image: AssetImage('assets/images/button-square-background.png'),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.4),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: const Offset(0, 0), // changes position of shadow
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Center(
-        child: ElevatedButton(
-          onPressed: _controller.handleSoundButton,
-          style: ElevatedButton.styleFrom(
-            elevation: 0,
-            padding: const EdgeInsets.all(10),
-            primary: Colors.transparent,
-            onPrimary: const Color(0XFF3A2922),
-          ),
-          child: Image.asset(
-            _controller.isMuted ? 'assets/images/mute-icon.png' : 'assets/images/unmute-icon.png',
-            fit: BoxFit.contain,
+          child: Center(
+            child: ElevatedButton(
+              onPressed: _controller.handleSoundButton,
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                padding: const EdgeInsets.all(10),
+                primary: Colors.transparent,
+                onPrimary: const Color(0XFF3A2922),
+              ),
+              child: Image.asset(
+                _controller.isMuted ? 'assets/images/mute-icon.png' : 'assets/images/unmute-icon.png',
+                fit: BoxFit.contain,
+              ),
+            ),
           ),
         ),
       ),
@@ -108,19 +102,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Widget _titleText() {
-    return const Text(
-      'Flutter Ninja',
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 48,
-        fontFamily: '8BIT WONDER',
+    return Transform.translate(
+      offset: const Offset(0, -10),
+      child: Align(
+        alignment: Alignment.center,
+        child: const Text(
+          'Flutter Ninja',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 48,
+            fontFamily: '8BIT WONDER',
+          ),
+        ),
       ),
     );
   }
 
   Widget _selectScene() {
     return Transform.translate(
-      offset: const Offset(0, 0),
+      offset: const Offset(0, -10),
       child: Align(
         alignment: Alignment.center,
         child: Container(
